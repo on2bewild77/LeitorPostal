@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -19,10 +20,18 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      - name: Build with Gradle (wrapper auto-baixado)
+      # Instala e configura o Gradle (sem precisar do wrapper no repositório)
+      - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
-      - run: ./gradlew assembleDebug
+        with:
+          gradle-version: 8.7
+          cache-read-only: false
 
+      # Compila o APK debug com o binário 'gradle' instalado pela action acima
+      - name: Build with Gradle
+        run: gradle assembleDebug
+
+      # Publica o APK como artefacto do workflow
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
